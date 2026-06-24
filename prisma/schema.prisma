@@ -1,0 +1,150 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+enum Role {
+  ADMIN
+  VISITOR
+}
+
+enum CategoryType {
+  project
+  portfolio
+  article
+}
+
+// Models
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(VISITOR)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+model Category {
+  id       String       @id @default(cuid())
+  name     String
+  slug     String       @unique
+  type     CategoryType
+  projects Project[]
+
+  @@map("categories")
+}
+
+model Project {
+  id               String   @id @default(cuid())
+  title            String
+  slug             String   @unique
+  shortDescription String   @map("short_description")
+  content          String   @default("")
+  coverImage       String?  @map("cover_image")
+  githubUrl        String?  @map("github_url")
+  demoUrl          String?  @map("demo_url")
+  downloadUrl      String?  @map("download_url")
+  isFeatured       Boolean  @default(false) @map("is_featured")
+  isPublished      Boolean  @default(false) @map("is_published")
+  categoryId       String?  @map("category_id")
+  category         Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  @@map("projects")
+}
+
+model PortfolioItem {
+  id               String   @id @default(cuid())
+  title            String
+  slug             String   @unique
+  clientName       String?  @map("client_name")
+  shortDescription String   @map("short_description")
+  content          String   @default("")
+  coverImage       String?  @map("cover_image")
+  websiteUrl       String?  @map("website_url")
+  technologies     String[] // Stored as JSON array in PostgreSQL
+  isFeatured       Boolean  @default(false) @map("is_featured")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  @@map("portfolio_items")
+}
+
+model Article {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  excerpt     String    @default("")
+  content     String    @default("")
+  coverImage  String?   @map("cover_image")
+  isPublished Boolean   @default(false) @map("is_published")
+  publishedAt DateTime? @map("published_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@map("articles")
+}
+
+model Skill {
+  id       String  @id @default(cuid())
+  name     String
+  icon     String? @default("")
+  level    Int     @default(0) // 0 to 100
+  category String  @default("general")
+  sortOrder Int    @default(0) @map("sort_order")
+
+  @@map("skills")
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String?
+  message   String
+  isRead    Boolean  @default(false) @map("is_read")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("contact_messages")
+}
+
+model SocialLink {
+  id        String  @id @default(cuid())
+  platform  String
+  url       String
+  icon      String? @default("")
+  sortOrder Int     @default(0) @map("sort_order")
+  isActive  Boolean @default(true) @map("is_active")
+
+  @@map("social_links")
+}
+
+model SiteSetting {
+  id              String   @id @default(cuid())
+  siteTitle       String   @default("") @map("site_title")
+  siteDescription String   @default("") @map("site_description")
+  fullName        String   @default("") @map("full_name")
+  jobTitle        String   @default("") @map("job_title")
+  aboutMe         String   @default("") @map("about_me")
+  email           String   @default("")
+  phone           String   @default("")
+  githubUrl       String?  @map("github_url")
+  linkedinUrl     String?  @map("linkedin_url")
+  youtubeUrl      String?  @map("youtube_url")
+  instagramUrl    String?  @map("instagram_url")
+  telegramUrl     String?  @map("telegram_url")
+  whatsappUrl     String?  @map("whatsapp_url")
+  resumePdf       String?  @map("resume_pdf")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("site_settings")
+}
