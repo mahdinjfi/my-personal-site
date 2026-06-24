@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+:root {
+  /* Light Mode Variables (Next Phases) */
+  --background: #ffffff;
+  --foreground: #0f172a;
+}
+
+.dark {
+  /* Dark Mode Variables based on design.md */
+  --background: #0F172A;
+  --foreground: #F8FAFC;
+  --surface: #1E293B;
+  --primary: #3B82F6;
+  --secondary: #8B5CF6;
+  --accent: #06B6D4;
+  --text-secondary: #CBD5E1;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+}
